@@ -21,7 +21,7 @@ Cinematic freecam for RedM with filters, depth of field, and cinematic bars.
 
 | Command | Description |
 |---------|-------------|
-| `/ccam` | Open cinematic camera menu |
+| `/freecam` | Open cinematic camera menu |
 
 ## Credits
 - Adapted from [Randolio's freecam resource](https://github.com/Randolio/randol_freecam/tree/main) for FiveM

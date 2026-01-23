@@ -60,6 +60,7 @@ local function resetEverything()
     rotSpeed = 2.0
     currFov = 50.0
     currFilter = 1
+    DisplayRadar(true)
     ClearTimecycleModifier()
     FREE_CAM = nil
     precision = 1.0
@@ -84,38 +85,36 @@ local function processNewPos(x, y, z)
         newPos.y = newPos.y - direction * moveSpeed * multY
     end
 
-    if IsDisabledControlPressed(0, 0x8FD015D8) then -- W (forwards)
+    if IsDisabledControlPressed(1, 0x8FD015D8) then
         updatePosition(Sin(offsetRotZ), Cos(offsetRotZ), Sin(offsetRotX), -1)
-    elseif IsDisabledControlPressed(0, 0xD27782E3) then -- S (backwards)
+    elseif IsDisabledControlPressed(1, 0xD27782E3) then
         updatePosition(Sin(offsetRotZ), Cos(offsetRotZ), Sin(offsetRotX), 1)
     end
 
-    if IsDisabledControlPressed(0, 0x7065027D) then -- A (left)
+    if IsDisabledControlPressed(1, 0x7065027D) then
         updatePosition(Sin(offsetRotZ + 90.0), Cos(offsetRotZ + 90.0), Sin(offsetRotY), -1)
-    elseif IsDisabledControlPressed(0, 0xB4E465B4) then -- D (right)
+    elseif IsDisabledControlPressed(1, 0xB4E465B4) then
         updatePosition(Sin(offsetRotZ + 90.0), Cos(offsetRotZ + 90.0), Sin(offsetRotY), 1)
     end
 
-    if IsDisabledControlPressed(0, 0xD9D0E1C0) then -- Space (up)
-        newPos.z += moveSpeed
-    elseif IsDisabledControlPressed(0, 0x8FFC75D6) then -- Z (down)
-        newPos.z -= moveSpeed
+    if IsDisabledControlPressed(1, 0xD9D0E1C0) then
+        newPos.z = newPos.z + moveSpeed
+    elseif IsDisabledControlPressed(1, 0x26E9DC00) then
+        newPos.z = newPos.z - moveSpeed
     end
 
-
-    if IsDisabledControlPressed(0, 0xA415D8C7) then -- Mouse wheel up (zoom in)
+    if IsDisabledControlPressed(1, 0xA5BDCD3C) then
         setNewFov(-1.0)
-    elseif IsDisabledControlPressed(0, 0xAF8E128F) then -- Mouse wheel down (zoom out)
+    elseif IsDisabledControlPressed(1, 0x430593AA) then
         setNewFov(1.0)
     end
 
+    offsetRotX = offsetRotX - (GetDisabledControlNormal(1, 0xD2047988) * precision * 8.0)
+    offsetRotZ = offsetRotZ - (GetDisabledControlNormal(1, 0xA987235F) * precision * 8.0)
 
-    offsetRotX = offsetRotX - (GetDisabledControlNormal(0, 0xD2047988) * precision * 8.0)
-    offsetRotZ = offsetRotZ - (GetDisabledControlNormal(0, 0xA987235F) * precision * 8.0)
-
-    if IsDisabledControlPressed(1, 44) then -- Q (roll left)
+    if IsDisabledControlPressed(1, 0xDE794E3E) then
         offsetRotY = offsetRotY - precision
-    elseif IsDisabledControlPressed(1, 38) then -- E (roll right)
+    elseif IsDisabledControlPressed(1, 0xCEFD9220) then
         offsetRotY = offsetRotY + precision
     end
 
@@ -127,9 +126,13 @@ local function processNewPos(x, y, z)
 end
 
 local function processCamControls()
-    DisableAllControlActions(0) -- kbm
+    DisableAllControlActions(0)
     DisableAllControlActions(1)
-    DisableAllControlActions(2) -- gamepad
+    DisableAllControlActions(2)
+    
+    EnableControlAction(0, 0x1F6D95E5, true) -- F4
+    EnableControlAction(1, 0x1F6D95E5, true)
+    EnableControlAction(2, 0x1F6D95E5, true)
 
     local camCoords = GetCamCoord(FREE_CAM)
     local newPos = processNewPos(camCoords.x, camCoords.y, camCoords.z)
@@ -147,7 +150,6 @@ local function processCamControls()
         lib.hideMenu()
     end
 end
-
 
 local function toggleCam()
     camActive = not camActive
@@ -174,10 +176,10 @@ local function toggleCam()
             resetEverything()
         end)
         
-        notify('Freecam enabled')
+        notify('Freecam enabled.')
     else
         FreezeEntityPosition(ped, false)
-        notify('Freecam disabled')
+        notify('Freecam disabled.')
     end
 end
 
@@ -207,11 +209,10 @@ RegisterCommand(Config.CommandName, function()
             end
         end,
         options = {
-            { label = 'Toggle Camera', checked = camActive, icon = 'camera', description = 'W/A/S/D move, Space/Ctrl up/down' },
+            { label = 'Toggle Camera', checked = camActive, icon = 'camera', description = 'W/A/S/D move, Space/Z up/down, Q/E roll, Scroll to zoom' },
             { label = 'Camera Filters', values = Config.Filters, icon = 'palette', defaultIndex = currFilter, description = 'Use arrow keys to navigate filters.' },
             { label = 'Toggle Black Bars', checked = barsOn, icon = 'film', description = 'Toggle cinematic bars.' },
             { label = 'Toggle Minimap', checked = not IsRadarHidden(), icon = 'map', description = 'Toggle the minimap.' },
-            
         }
     }, function(selected, scrollIndex, args)
         if selected == 2 then

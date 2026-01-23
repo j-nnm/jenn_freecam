@@ -1,20 +1,18 @@
 # jenn_freecam
 
-Cinematic freecam for RedM with filters, depth of field, and cinematic bars.
+Cinematic freecam for RedM with filters and cinematic bars.
 
 ## Dependencies
 
 - [ox_lib](https://github.com/overextended/ox_lib)
-- vorp_core (for notifications)
+- vorp_core (for notifications but if you use something different feel free to change)
 
 ## Features
 
 - Free Camera Movement
 - Camera Filters
-- Depth of Field (adjustable near/far/strength)
 - Cinematic Bars
 - Zoom Control
-- Speed Control
 - Max Distance limit from player
 
 ## Commands

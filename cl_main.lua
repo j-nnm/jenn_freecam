@@ -9,24 +9,8 @@ local barsOn = false
 local currFov = 50.0
 local precision = 1.0
 
-local vorpCore = nil
-
-local function getCore()
-    if vorpCore then return vorpCore end
-    local success, result = pcall(function()
-        return exports.vorp_core:GetCore()
-    end)
-    if success then vorpCore = result end
-    return vorpCore
-end
-
 local function notify(message)
-    local core = getCore()
-    if core and core.NotifyRightTip then
-        core.NotifyRightTip(message, 3000)
-        return
-    end
-    TriggerEvent("vorp:TipRight", message, 3000)
+    lib.notify({title = message, type = 'info'})
 end
 
 local function toggleMap()

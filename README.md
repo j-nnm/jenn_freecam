@@ -5,7 +5,6 @@ Cinematic freecam for RedM with filters and cinematic bars.
 ## Dependencies
 
 - [ox_lib](https://github.com/overextended/ox_lib)
-- vorp_core (for notifications but if you use something different feel free to change)
 
 ## Features
 
